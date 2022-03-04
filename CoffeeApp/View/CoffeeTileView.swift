@@ -9,28 +9,19 @@ import SwiftUI
 import FirebaseStorage
 
 struct CoffeeTileView: View {
-    let coffeeColorTwo = Color(UIColor(red: 0.93, green: 0.88, blue: 0.83, alpha: 1.00))
-    let coffeeColorThree = Color(UIColor(red: 0.87, green: 0.72, blue: 0.57, alpha: 1.00))
-    let coffeeColorFour = Color(UIColor(red: 0.69, green: 0.54, blue: 0.41, alpha: 1.00))
     
-    let title:String
-    let sourceBarista:String
-    let rating:Float
-    let isBookmarked:Bool
-    let ratings:[Float]
+    let recipe: Recipe
     var numOfRatings:Int {
-        ratings.count
+        recipe.ratingsList.count
     }
-    let imagePath:String
-    
     var formattedRating:String {
-        return String(format: "%.1f", rating)
+        return String(format: "%.1f", recipe.currentRating)
     }
     
     @State var coffeeImage = UIImage(systemName: "cup.and.saucer")
     
     func downloadImage() {
-        let downloadRef = Storage.storage().reference(withPath: self.imagePath)
+        let downloadRef = Storage.storage().reference(withPath: recipe.imageUrl)
         let downloadTaskRef = downloadRef.getData(maxSize: 4 * 1024 * 1024) { data, error in
             if let error = error {
                 print("Error: Failed to download image from Firebase")
@@ -44,7 +35,6 @@ struct CoffeeTileView: View {
         }
     }
     
-    
     var body: some View {
 
         VStack {
@@ -55,7 +45,7 @@ struct CoffeeTileView: View {
                     .onAppear(perform: downloadImage)
                     
                 
-                if(isBookmarked) {
+                if(recipe.bookMarked) {
                     VStack {
                         HStack {
                             Spacer()
@@ -63,7 +53,7 @@ struct CoffeeTileView: View {
                             Image(systemName: "bookmark.fill")
                                 .resizable()
                                 .frame(width: 20, height: 40, alignment: .trailing)
-                                .foregroundColor(coffeeColorFour)
+                                .foregroundColor(AppColors.coffeeColorFour)
                                 .padding(.horizontal, 12)
                                 .offset(y: -6)
                         }
@@ -79,7 +69,7 @@ struct CoffeeTileView: View {
 
             VStack(spacing: 5) {
                 HStack {
-                    Text(title)
+                    Text(recipe.title)
                         .font(.system(size: 17))
                         .fontWeight(.bold)
                     
@@ -90,7 +80,7 @@ struct CoffeeTileView: View {
                 HStack {
                     Image(systemName: "person.circle")
                     
-                    Text(sourceBarista)
+                    Text(recipe.sourceBarista)
                         .font(.system(size: 12))
                     
                     Spacer()
@@ -117,7 +107,7 @@ struct CoffeeTileView: View {
                     
                     Text("\(numOfRatings) Ratings")
                         .font(.system(size: 10))
-                        .foregroundColor(coffeeColorFour)
+                        .foregroundColor(AppColors.coffeeColorFour)
                         .fontWeight(.black)
                 }
             }
@@ -127,13 +117,14 @@ struct CoffeeTileView: View {
             
             
         }
-        .background(coffeeColorTwo)
+        .background(AppColors.coffeeColorTwo)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
 struct CoffeeTileView_Previews: PreviewProvider {
+    static let recipe: Recipe = Recipe(title: "Ice Latte", sourceBarista: "Neel Yang", currentRating: 4.3, bookMarked: true, ratingsList: [4, 5,3, 6], imageUrl: "/CoffeeImages/CoffeeImage1.jpeg")
     static var previews: some View {
-        CoffeeTileView(title: "Ice Latte", sourceBarista: "Neel Yang", rating: 4.3, isBookmarked: true, ratings: [4, 5, 4, 5], imagePath: "/CoffeeImages/CoffeeImage1.jpeg")
+        CoffeeTileView(recipe: recipe)
     }
 }

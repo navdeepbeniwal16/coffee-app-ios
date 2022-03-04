@@ -14,8 +14,6 @@ struct Home: View {
         VStack {
             // Header
             HStack {
-                
-                
                 VStack(alignment: .leading) {
                     Text("Good morning")
                         .font(.title)
@@ -135,20 +133,14 @@ struct Home: View {
                             .fontWeight(.semibold)
                             .foregroundColor(AppColors.coffeeColorFive)
                     }
-
-                    
                 }
                 .padding([.horizontal, .top])
                 
                 ScrollView(.horizontal,  showsIndicators: false) {
                     HStack(spacing: 20) {
-                        
                         ForEach(recipeVM.trendingRecipes) { recipe in
-                            
-                            CoffeeTileView(title: recipe.title, sourceBarista: recipe.sourceBarista, rating: recipe.currentRating, isBookmarked: recipe.bookMarked, ratings: recipe.ratingsList, imagePath: recipe.imageUrl)
-                            
+                            CoffeeTileView(recipe: recipe)
                         }
-                        
                     }
                     .padding([.horizontal])
                 }
@@ -175,7 +167,7 @@ struct Home: View {
                     HStack(spacing: 20) {
                        
                         ForEach(recipeVM.latestRecipes) { recipe in
-                            CoffeeTileView(title: recipe.title, sourceBarista: recipe.sourceBarista, rating: recipe.currentRating, isBookmarked: recipe.bookMarked, ratings: recipe.ratingsList, imagePath: recipe.imageUrl)
+                            CoffeeTileView(recipe: recipe)
                             
                         }
                     }
@@ -199,7 +191,7 @@ struct Home: View {
                     HStack(spacing: 10) {
                         ForEach(recipeVM.topBaristas){ barista in
                             
-                            BaristaTileView(title: barista.baristaName)
+                            BaristaTileView(title: barista.baristaName) // TODO: Passing barista object instead of just title
                             
                         }
                     }
@@ -213,6 +205,7 @@ struct Home: View {
             Spacer()
         }
         .onAppear {
+            // TODO: Change networking code to use async/await syntax to avoid creating new function for every entity
             recipeVM.loadTrendingRecipesData()
             recipeVM.loadLatestRecipesData()
             recipeVM.loadTopBaristasData()
