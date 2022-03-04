@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct BaristaTileView: View {
-    let coffeeColorTwo = Color(UIColor(red: 0.93, green: 0.88, blue: 0.83, alpha: 1.00))
-    let coffeeColorThree = Color(UIColor(red: 0.87, green: 0.72, blue: 0.57, alpha: 1.00))
-    let coffeeColorFour = Color(UIColor(red: 0.69, green: 0.54, blue: 0.41, alpha: 1.00))
     
     let title:String
     
@@ -33,7 +30,7 @@ struct BaristaTileView: View {
                 .padding(5)
                 .padding(.horizontal, 10)
                 .background(
-                    coffeeColorFour
+                    AppColors.coffeeColorFour
                 )
                 .foregroundColor(Color.white)
                 .clipShape(Capsule())

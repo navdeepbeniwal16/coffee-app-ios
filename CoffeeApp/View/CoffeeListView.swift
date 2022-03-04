@@ -6,62 +6,17 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 struct CoffeeListView: View {
+    let recipes: [Recipe]
+    
     var body: some View {
         ScrollView {
             VStack {
-                ForEach(0..<10) { row in
+                ForEach(recipes) { recipe in
                     
-                    HStack {
-                        Image("CoffeeImage2")
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 50, height: 50, alignment: .center)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .padding(5)
-                        
-                        
-                        VStack(alignment:.leading) {
-                            HStack {
-                                Text("Recipe One")
-                                    .fontWeight(.semibold)
-                                
-                                Spacer()
-                                
-                                HStack {
-                                    Text("4.7")
-                                        .font(.system(size: 12))
-                                        .fontWeight(.semibold)
-                                    Image(systemName: "star.fill")
-                                        .font(.system(size: 12))
-                                }
-                                .padding(.vertical, 3)
-                                .padding(.horizontal, 7)
-                                .background(Color.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                            }
-                            
-                            HStack {
-                                Image(systemName: "person.circle.fill")
-                                Text("Neil Yang")
-                                    .font(.system(size: 12))
-                                
-                                Spacer()
-                                
-                                Text("4.3K Ratings")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(AppColors.coffeeColorFour)
-                                    .fontWeight(.black)
-                            }
-                        }
-                        
-                        Spacer()
-                    }
-                    .background(AppColors.coffeeColorTwo)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.horizontal)
-                    .shadow(radius: 2)
+                    CoffeeLandscapeView(recipe: recipe)
                 }
             }
         }
@@ -70,6 +25,87 @@ struct CoffeeListView: View {
 
 struct CoffeeListView_Previews: PreviewProvider {
     static var previews: some View {
-        CoffeeListView()
+        CoffeeListView(recipes: [])
+    }
+}
+
+struct CoffeeLandscapeView: View {
+    let recipe:Recipe
+    
+    var formattedRating:String {
+        return String(format: "%.1f", recipe.currentRating)
+    }
+    var numOfRatings:Int {
+        recipe.ratingsList.count
+    }
+    
+    @State var coffeeImage = UIImage(systemName: "cup.and.saucer")
+    
+    var body: some View {
+        HStack {
+            Image(uiImage: coffeeImage!)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 50, height: 50, alignment: .center)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(5)
+                .onAppear(perform: downloadImage)
+            
+            
+            VStack(alignment:.leading) {
+                HStack {
+                    Text("\(recipe.title)")
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Text("\(formattedRating)")
+                            .font(.system(size: 12))
+                            .fontWeight(.semibold)
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 12))
+                    }
+                    .padding(.vertical, 3)
+                    .padding(.horizontal, 7)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                    Text(recipe.sourceBarista)
+                        .font(.system(size: 12))
+                    
+                    Spacer()
+                    
+                    Text("\(numOfRatings) Ratings")
+                        .font(.system(size: 10))
+                        .foregroundColor(AppColors.coffeeColorFour)
+                        .fontWeight(.black)
+                }
+            }
+            
+            Spacer()
+        }
+        .background(AppColors.coffeeColorTwo)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(.horizontal)
+        .shadow(radius: 2)
+    }
+    
+    func downloadImage() {
+        let downloadRef = Storage.storage().reference(withPath: recipe.imageUrl)
+        let downloadTaskRef = downloadRef.getData(maxSize: 4 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Error: Failed to download image from Firebase")
+                return
+            }
+            
+            guard let imageData = data else { return }
+            
+            print(String(describing: imageData))
+            self.coffeeImage = UIImage(data: imageData)
+        }
     }
 }
