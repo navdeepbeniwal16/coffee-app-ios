@@ -128,7 +128,7 @@ struct Home: View {
                     Spacer()
                     
                     NavigationLink  {
-                        CoffeeListView()
+                        CoffeeListView(recipes: recipeVM.trendingRecipes)
                     } label: {
                         Text("See more")
                             .font(.subheadline)
@@ -159,10 +159,14 @@ struct Home: View {
                     
                     Spacer()
                     
-                    Text("See more")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(AppColors.coffeeColorFive)
+                    NavigationLink  {
+                        CoffeeListView(recipes: recipeVM.latestRecipes)
+                    } label: {
+                        Text("See more")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(AppColors.coffeeColorFive)
+                    }
                 }
                 .padding([.horizontal, .top])
                 
